@@ -87,11 +87,16 @@ def _guard_doc_type(resp: LLMResponse, text: str, b: _Builder) -> None:
         chosen = sorted(in_title)[0]
         b.warn("doc_type_ambiguous", f"title matches {sorted(in_title)}, model said '{llm}'; using '{chosen}'")
         b.set("doc_type", chosen, 0.5)
-    elif llm != "unknown" and re.search(_TITLE[llm], text, re.I):
+    elif llm != "unknown" and any(
+        re.match(rf"^\W*(?:{_TITLE[llm]})", tn.skeleton(ln.strip()), re.I) or re.match(rf"^\W*(?:{_TITLE[llm]})", ln.strip(), re.I)
+        for ln in text.splitlines()
+    ):
+        # No title in the header, but some line further down starts like a title.
         b.set("doc_type", llm, 0.6)
     else:
         if llm != "unknown":
-            b.warn("doc_type_ungrounded", f"model said '{llm}' but no such document title found")
+            # A passing mention ("пришлите счёт") is not evidence that THIS is an invoice.
+            b.warn("doc_type_ungrounded", f"model said '{llm}' but no line is titled like one")
         b.set("doc_type", "unknown", 1.0)
 
 

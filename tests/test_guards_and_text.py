@@ -46,6 +46,19 @@ def test_ocr_digits_fold_only_inside_numbers():
     assert tn.fold_ocr_digits("Оказание услуг") == "Оказание услуг"
 
 
+def test_pieces_of_a_grouped_number_do_not_ground():
+    # Real bug found by the eval: model read "2 шт × 3 150 EUR" as qty=3, price=150.
+    text = "Насос — 2 шт × 3 150 EUR"
+    assert tn.number_is_grounded(3150, text) and tn.number_is_grounded(2, text)
+    assert not tn.number_is_grounded(150, text) and not tn.number_is_grounded(3, text)
+
+
+def test_passing_mention_is_not_a_document_type():
+    _, text = load("11_email_not_a_document")
+    out = apply_guards(LLMResponse(doc_type="invoice"), text)
+    assert out.doc_type == "unknown"
+
+
 def test_dates_in_kazakh_and_russian_words():
     found = [d for d, _ in tn.find_dates("09 қазан 2026 ж. и «31» октября 2026 г.")]
     assert found == [date(2026, 10, 9), date(2026, 10, 31)]

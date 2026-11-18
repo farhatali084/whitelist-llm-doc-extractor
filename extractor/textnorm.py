@@ -249,7 +249,9 @@ def numbers_in_text(text: str, include_words: bool = True) -> set[float]:
             values.add(float(m.group(0).replace(",", "")))
         for m in _NUM_GROUPED_EU.finditer(variant):
             values.add(float(m.group(0).replace(".", "").replace(",", ".")))
-        for m in _NUM_PLAIN.finditer(variant):
+        # Plain numbers only outside grouped ones: "3 150" must not ground 3 or 150.
+        rest = _NUM_GROUPED_EU.sub(" ", _NUM_GROUPED.sub(" ", _NUM_SPACED.sub(" ", variant)))
+        for m in _NUM_PLAIN.finditer(rest):
             values.add(float(m.group(0).replace(",", ".")))
         for m in _NUM_ABBR.finditer(variant):
             mult = 1_000 if m.group(2).lower() == "тыс" else 1_000_000
@@ -267,7 +269,7 @@ def number_is_verbatim(value: float, text: str) -> bool:
     """Written in plain digits, no OCR repair or word parsing (used for confidence)."""
     text = _SUBUNIT.sub(" ", text)
     plain = {_to_float(m.group(0)) for m in _NUM_SPACED.finditer(text)}
-    plain |= {_to_float(m.group(0)) for m in _NUM_PLAIN.finditer(text)}
+    plain |= {_to_float(m.group(0)) for m in _NUM_PLAIN.finditer(_NUM_SPACED.sub(" ", text))}
     plain |= {float(m.group(0).replace(",", "")) for m in _NUM_GROUPED.finditer(text)}
     return any(abs(value - v) < 0.005 for v in plain)
 
