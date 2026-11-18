@@ -104,6 +104,11 @@ def bin_checksum_ok(bin_: str) -> bool:
     return s == d[11]
 
 
+def clean_bin(raw: str) -> str:
+    """Model's BIN string -> digits only, with OCR look-alikes folded."""
+    return re.sub(r"[\s\-]", "", raw.translate(_OCR_DIGIT_MAP))
+
+
 def _clean_bin_candidate(raw: str) -> tuple[str | None, bool]:
     """Return (12-digit BIN or None, was_ocr_repaired)."""
     folded = raw.translate(_OCR_DIGIT_MAP)
