@@ -10,11 +10,15 @@ I used a small local model (`qwen2.5:3b` on CPU, about 1 minute per document) an
 First, a held-out set of 30–50 realistic documents, frozen *before* I touch the rules again, so the eval measures generalisation and not my tuning. Second, supplier-vs-buyer detection (`Поставщик/Исполнитель` vs `Покупатель/Заказчик`), because the one remaining hallucination is exactly that: a real name from the document assigned to the wrong role.
 
 ## 4. Where did I use AI, and what did I have to fix in its output?
-I used an AI coding assistant (Claude Code) to write most of the code, the test documents and the drafts of these texts. I went through the code to be able to explain every part. Things I had to correct:
-- It once "fixed" an OCR test document by special-casing a word from that document inside the name matcher. That is overfitting disguised as a feature, so it was replaced with a general Latin/Cyrillic look-alike rule.
-- Its first number grounding was too lenient (the `3 150` bug above).
-- Its first date rule accepted a validity date (`действительно до`) as the issue date.
-- Its first document-type rule treated a passing mention ("пришлите счёт") as proof that the text is an invoice.
+I used an AI coding assistant (Claude Code) for most of the implementation: the code, the eight additional test documents and the first drafts of the README. My part was the decisions and the checking. I chose a local model (Ollama, qwen2.5:3b) because I had no paid API key and needed something my laptop CPU can run, I decided which rules to keep for the ambiguous fields, and I ran the eval on the real model and read every error it reported.
+
+Several things in the AI's output had to be corrected:
+- To make one OCR test document pass, it once added a special case for a word from that exact document inside the name matcher. That is overfitting to the test set, so it was replaced with a general rule for Latin and Cyrillic look-alike letters.
+- Its first number check was too loose. The real model read "2 шт × 3 150 EUR" as quantity 3 and price 150, and the check accepted both because "3" and "150" appear as pieces of "3 150". The eval exposed this, and grouped numbers are now matched as a whole.
+- Its first date rule accepted a validity date ("действительно до") as the issue date.
+- Its first document-type rule treated a passing mention ("пришлите счёт") as proof that an email is an invoice.
+
+I went through every file afterwards so that I can explain and change any part of it.
 
 ## 5. Which requirement was ambiguous, and how did I interpret it?
 "Сумма итого": document 1 has both `Итого 160 500` and `Всего к оплате 186 180`. I defined `total_amount` as the amount payable (`к оплате` > `всего` > `итого`). This is not a contradiction when the difference equals the stated VAT.
