@@ -1,0 +1,24 @@
+{
+  "doc_type": "commercial_offer",
+  "supplier_name": "Digital Solutions",
+  "supplier_bin": null,
+  "doc_number": null,
+  "doc_date": "2026-11-05",
+  "currency": "KZT",
+  "total_amount": null,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Разработка сайта",
+      "qty": null,
+      "price": 450000
+    },
+    {
+      "name": "Техподдержка, в месяц",
+      "qty": null,
+      "price": 60000
+    }
+  ],
+  "expected_warnings": [],
+  "_note": "No total written -> null (do not sum). 30.11.2026 is a validity date, not the issue date."
+}

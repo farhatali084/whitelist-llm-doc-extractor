@@ -1,0 +1,19 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО «ҚазМұнай Сервис»",
+  "supplier_bin": "190340043219",
+  "doc_number": "77-К",
+  "doc_date": "2026-10-20",
+  "currency": "KZT",
+  "total_amount": 1160000,
+  "vat_amount": 160000,
+  "line_items": [
+    {
+      "name": "Масло моторное 10W-40, канистра 20 л",
+      "qty": 40,
+      "price": 29000
+    }
+  ],
+  "expected_warnings": [],
+  "_note": "Total and VAT only in words."
+}

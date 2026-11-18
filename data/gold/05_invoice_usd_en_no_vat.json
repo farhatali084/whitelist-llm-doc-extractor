@@ -1,0 +1,28 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "Silk Road Consulting LLP",
+  "supplier_bin": "201140056786",
+  "doc_number": "INV-2026-0412",
+  "doc_date": "2026-11-02",
+  "currency": "USD",
+  "total_amount": 2750,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Market research report (Central Asia)",
+      "qty": 1,
+      "price": 2400
+    },
+    {
+      "name": "Translation of report into Kazakh",
+      "qty": 1,
+      "price": 350
+    }
+  ],
+  "expected_warnings": [],
+  "accept": {
+    "supplier_name": [
+      "ТОО «Силк Роуд Консалтинг»"
+    ]
+  }
+}

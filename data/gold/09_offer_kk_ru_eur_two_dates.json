@@ -1,0 +1,32 @@
+{
+  "doc_type": "commercial_offer",
+  "supplier_name": "ЖШС «Тау Самал Инжиниринг»",
+  "supplier_bin": "081140012340",
+  "doc_number": "КП-56",
+  "doc_date": "2026-10-14",
+  "currency": "EUR",
+  "total_amount": 7200,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Насос Grundfos CR 10-6",
+      "qty": 2,
+      "price": 3150
+    },
+    {
+      "name": "Монтажные работы",
+      "qty": 1,
+      "price": 900
+    }
+  ],
+  "expected_warnings": [
+    "conflicting_dates"
+  ],
+  "accept": {
+    "line_items.name": [
+      "Сорғы / Насос Grundfos CR 10-6",
+      "Монтаж жұмыстары / Монтажные работы"
+    ]
+  },
+  "_note": "Two issue dates 14.10 and 15.10 -> first (header) one + warning. 'Без учета НДС' -> vat null."
+}

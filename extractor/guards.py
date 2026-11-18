@@ -32,7 +32,8 @@ _CURRENCY = {
 _VAT = re.compile(r"ндс|ққс|(?<!\w)vat(?!\w)", re.I)
 _VAT_INCLUSIVE = re.compile(r"(?:с|с\s+учетом|с\s+учётом|включая|including)\s+(?:ндс|vat)|ққс-?пен", re.I)
 _NO_VAT = re.compile(
-    r"без\s+ндс|ндс\s+не\s+облага|не\s+облагается\s+ндс|ққс-?сыз|ққс\s+салынбайды|"
+    r"без\s+(?:учета\s+|учёта\s+)?ндс|ндс\s+не\s+облага|не\s+облагается\s+ндс|"
+    r"ққс-?сыз|ққс\s+салынбайды|ққс\s+есепке\s+алынбаған|"
     r"without\s+vat|vat\s+exempt|not\s+subject\s+to\s+vat",
     re.I,
 )
@@ -68,10 +69,11 @@ class _Builder:
 # ----------------------------- field guards -------------------------------- #
 
 def _guard_doc_type(resp: LLMResponse, text: str, b: _Builder) -> None:
-    lines = [ln for ln in text.splitlines() if ln.strip()][:_HEADER_LINES]
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()][:_HEADER_LINES]
+    lines += [tn.skeleton(ln) for ln in lines]  # OCR: "Cчeт" written with Latin C/e
     in_title = {
         t for t, pat in _TITLE.items()
-        if any(re.match(rf"^\W*(?:{pat})", ln.strip(), re.I) for ln in lines)
+        if any(re.match(rf"^\W*(?:{pat})", ln, re.I) for ln in lines)
     }
     llm = resp.doc_type
     if len(in_title) == 1:
@@ -129,7 +131,8 @@ def _guard_doc_number(resp: LLMResponse, text: str, b: _Builder) -> None:
         num = re.sub(r"^\s*(?:№|N[o°]?\.?)\s*", "", num).strip()
         # "AKT-09 / 09 қазан" or "1245 от 12.11" -> keep only the number itself
         num = re.split(r"\s+/\s+|\s+(?:от|from|dated)\s+", num, maxsplit=1)[0].strip()
-        if not num or tn.fold_homoglyphs(num) not in tn.fold_homoglyphs(text):
+        num = tn.fold_ocr_digits(num)  # "2O7" -> "207"
+        if not num or tn.fold_homoglyphs(num) not in tn.fold_homoglyphs(tn.fold_ocr_digits(text)):
             b.warn("doc_number_dropped", f"'{resp.doc_number}' not found in document")
             num = None
     b.set("doc_number", num, 1.0 if num and num in text else 0.8)
@@ -143,7 +146,7 @@ def _issue_dates(text: str) -> list[date]:
     for d, pos in tn.find_dates(text):
         line_start = folded.rfind("\n", 0, pos) + 1
         labelled = _ISSUE_LABEL.search(folded[max(line_start, pos - 25):pos])
-        on_number_line = "№" in folded[line_start:pos]
+        on_number_line = re.search(r"№|N°|(?<!\w)No\.?\s*\d", folded[line_start:pos]) is not None
         if (labelled or on_number_line) and d not in out:
             out.append(d)
     return out

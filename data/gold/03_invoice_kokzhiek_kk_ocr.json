@@ -1,0 +1,29 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО \"Кокжиек Курылыс\"",
+  "supplier_bin": "210640900180",
+  "doc_number": "AKT-09",
+  "doc_date": "2026-10-09",
+  "currency": "KZT",
+  "total_amount": 340000,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Оказание услуг",
+      "qty": 1,
+      "price": 340000
+    }
+  ],
+  "expected_warnings": [
+    "supplier_bin_ocr_repaired"
+  ],
+  "accept": {
+    "supplier_name": [
+      "ЖШС «Көкжиек Құрылыс»"
+    ],
+    "line_items.name": [
+      "Қызмет көрсету / Оказание услуг"
+    ]
+  },
+  "_note": "Title 'Шот-фактура' -> invoice despite number AKT-09. 'НДС не облагается' -> vat null."
+}

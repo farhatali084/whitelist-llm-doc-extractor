@@ -1,0 +1,26 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО \"Алтын Құм Строй\"",
+  "supplier_bin": "220140077777",
+  "doc_number": "318",
+  "doc_date": "2026-11-14",
+  "currency": "KZT",
+  "total_amount": 430800,
+  "vat_amount": 60800,
+  "line_items": [
+    {
+      "name": "Цемент М400, мешок 50 кг",
+      "qty": 100,
+      "price": 2600
+    },
+    {
+      "name": "Песок речной, т",
+      "qty": 20,
+      "price": 6000
+    }
+  ],
+  "expected_warnings": [
+    "conflicting_totals"
+  ],
+  "_note": "380 000 + 60 800 != 430 800. Rule: take 'к оплате' line, warn."
+}

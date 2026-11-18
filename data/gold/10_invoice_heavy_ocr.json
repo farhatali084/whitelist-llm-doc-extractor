@@ -1,0 +1,26 @@
+{
+  "doc_type": "invoice",
+  "supplier_name": "ТОО \"ВОСТОК-ЭНЕРГО\"",
+  "supplier_bin": "150940021113",
+  "doc_number": "207",
+  "doc_date": "2026-11-03",
+  "currency": "KZT",
+  "total_amount": 122000,
+  "vat_amount": null,
+  "line_items": [
+    {
+      "name": "Кабель ВВГ 3x2,5",
+      "qty": 200,
+      "price": 450
+    },
+    {
+      "name": "Автомат ABB 16A",
+      "qty": 10,
+      "price": 3200
+    }
+  ],
+  "expected_warnings": [
+    "supplier_bin_ocr_repaired"
+  ],
+  "_note": "Latin/Cyrillic mix and O/0, l/1, З/3 OCR confusions everywhere."
+}

@@ -1,0 +1,24 @@
+{
+  "doc_type": "act",
+  "supplier_name": "ТОО «Nomad IT Solutions»",
+  "supplier_bin": "180540012343",
+  "doc_number": "15",
+  "doc_date": "2026-10-31",
+  "currency": "KZT",
+  "total_amount": 370000,
+  "vat_amount": 51034.48,
+  "line_items": [
+    {
+      "name": "Сопровождение 1С за октябрь 2026",
+      "qty": 1,
+      "price": 280000
+    },
+    {
+      "name": "Настройка VPN-сервера",
+      "qty": 2,
+      "price": 45000
+    }
+  ],
+  "expected_warnings": [],
+  "_note": "Two BINs: supplier (Исполнитель) vs buyer (Заказчик)."
+}

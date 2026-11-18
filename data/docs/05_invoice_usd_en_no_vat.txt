@@ -1,0 +1,13 @@
+INVOICE / СЧЁТ № INV-2026-0412
+Date / Дата: 02.11.2026
+
+Supplier / Поставщик: Silk Road Consulting LLP (ТОО «Силк Роуд Консалтинг»)
+BIN / БИН: 201140056786
+Bill to: ТОО «Арман Агро»
+
+Description                              Qty    Unit price, USD
+Market research report (Central Asia)     1       2,400.00
+Translation of report into Kazakh         1         350.00
+
+Total: USD 2,750.00
+VAT: not applicable (без НДС)

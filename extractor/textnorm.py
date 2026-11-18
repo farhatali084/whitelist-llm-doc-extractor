@@ -36,6 +36,13 @@ def fold_ocr_digits(text: str) -> str:
     neighbour (ignoring one space/dot) is a digit or another OCR char.
     """
     chars = list(text)
+
+    def neighbour(i: int, step: int) -> str:
+        j = i + step
+        if 0 <= j < len(chars) and chars[j] == " ":  # "9O OOO": look across one space
+            j += step
+        return chars[j] if 0 <= j < len(chars) else ""
+
     for _ in range(3):  # a few passes so chains like "Ol" next to a digit both fold
         changed = False
         for i, ch in enumerate(chars):
@@ -43,7 +50,7 @@ def fold_ocr_digits(text: str) -> str:
                 continue
             left = chars[i - 1] if i > 0 else ""
             right = chars[i + 1] if i + 1 < len(chars) else ""
-            if left.isdigit() or right.isdigit():
+            if neighbour(i, -1).isdigit() or neighbour(i, 1).isdigit():
                 # Do not fold the first letter of a real word ("Оказание", "Итого 5").
                 if right.isalpha() and right not in _OCR_CHARS:
                     continue
@@ -60,12 +67,22 @@ def fold_homoglyphs(s: str) -> str:
     return re.sub(r"\s+", "", s.translate(_HOMOGLYPHS).upper())
 
 
+_LATIN_TO_CYR = str.maketrans("abekmhopctxy", "авекмнорстху")
+
+
+def skeleton(s: str) -> str:
+    """Comparison key: lower-case, Kazakh -> Russian letters, Latin look-alikes -> Cyrillic.
+    Applied to BOTH sides of a comparison, so "TOO \"BOCTOK\"" == "ТОО «Восток»"."""
+    return s.lower().translate(_KK_TO_RU).translate(_LATIN_TO_CYR)
+
+
+_LEGAL_SKELETONS = {skeleton(f) for f in _LEGAL_FORMS}
+
+
 def normalize_name(s: str) -> str:
-    """Lower-case, fold Kazakh letters, drop quotes and legal forms (ТОО, ЖШС...)."""
-    s = s.lower().translate(_KK_TO_RU)
-    s = re.sub(r"[«»\"'“”„`()]", " ", s)
-    tokens = [t for t in re.split(r"[\s/,.]+", s) if t and t not in _LEGAL_FORMS]
-    return " ".join(tokens)
+    """Comparison form of a name: skeleton, no quotes, no legal forms (ТОО, ЖШС, LLP...)."""
+    s = re.sub(r"[«»\"'“”„`()]", " ", skeleton(s))
+    return " ".join(t for t in re.split(r"[\s/,.]+", s) if t and t not in _LEGAL_SKELETONS)
 
 
 def name_tokens(s: str) -> list[str]:
@@ -135,6 +152,13 @@ def find_bins(text: str) -> dict[str, bool]:
                 found[bin_] = found.get(bin_, False) or repaired
     for m in re.finditer(r"(?<!\d)\d{12}(?!\d)", text):
         found.setdefault(m.group(0), False)
+    # Unlabelled (label itself OCR-damaged, e.g. "6NH"): a 12-char token made of
+    # digits and look-alikes, at least half of them real digits.
+    for m in re.finditer(r"(?<![\w])[0-9OoОоlI|Зз]{12}(?![\w])", text):
+        token = m.group(0)
+        if sum(c.isdigit() for c in token) >= 6:
+            folded = token.translate(_OCR_DIGIT_MAP)
+            found[folded] = found.get(folded, False) or folded != token
     return found
 
 
