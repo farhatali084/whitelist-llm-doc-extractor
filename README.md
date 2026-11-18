@@ -12,7 +12,7 @@ Requirements: Python 3.10+ and git. Ollama is **not** needed for the eval (see "
 
 **Windows (PowerShell)**
 ```powershell
-git clone <repo-url> whitelist-llm-doc-extractor
+git clone https://github.com/farhatali084/whitelist-llm-doc-extractor.git
 cd whitelist-llm-doc-extractor
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
@@ -22,7 +22,7 @@ python -m venv .venv
 
 **Linux / macOS**
 ```bash
-git clone <repo-url> whitelist-llm-doc-extractor
+git clone https://github.com/farhatali084/whitelist-llm-doc-extractor.git
 cd whitelist-llm-doc-extractor
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
