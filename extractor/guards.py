@@ -164,7 +164,9 @@ def _guard_doc_date(resp: LLMResponse, text: str, b: _Builder) -> None:
             f"several issue dates {[d.isoformat() for d in issue]}; using the first (header) one",
         )
         value, conf = issue[0], 0.5
-    elif value is None and len(issue) == 1:
+    elif len(issue) == 1 and value != issue[0]:
+        if value is not None:  # model took a validity/due date instead of the issue date
+            b.warn("doc_date_relabelled", f"model chose {value.isoformat()}; labelled issue date is {issue[0].isoformat()}")
         value, conf = issue[0], 0.7
     b.set("doc_date", value, conf)
 
